@@ -1,11 +1,11 @@
-# Используем PHP 8.4 CLI (официальный образ существует!)
 FROM php:8.4-cli
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Устанавливаем ВСЕ зависимости: JPEG, PNG, oniguruma (для mbstring)
+# Устанавливаем Git + все зависимости
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        git \
         libfreetype-dev \
         libjpeg-dev \
         libpng-dev \
@@ -24,14 +24,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-# Устанавливаем зависимости БЕЗ проверки платформы (чтобы избежать ошибок)
-RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
+# Устанавливаем зависимости
+# --prefer-dist: не использовать Git, только ZIP
+RUN composer install --optimize-autoloader --no-dev --prefer-dist
 
 # Генерация ключа
 RUN cp .env.example .env || true && php artisan key:generate
 
-# Порт
 EXPOSE 8000
-
-# Запуск
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
