@@ -132,6 +132,10 @@
     --sidebar-ring: oklch(0.439 0 0);
 }
 
+select{
+    color:black;
+}
+
 @layer base {
     * {
         @apply border-border;

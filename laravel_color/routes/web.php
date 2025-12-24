@@ -16,6 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-
+Route::get('/color-tool', function () {
+    return inertia('ColorTool');
+});
 
 require __DIR__.'/settings.php';
